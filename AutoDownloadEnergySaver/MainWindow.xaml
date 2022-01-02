@@ -1,0 +1,40 @@
+﻿<Window x:Class="AutoDownloadEnergySaver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoDownloadEnergySaver"
+        mc:Ignorable="d"
+        Title="ADES"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Height="295" Width="200" ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        Topmost="true">
+    <Grid Margin="10,0">
+        <StackPanel Orientation="Vertical">
+            <Label Content="ADES" FontWeight="Bold" FontSize="14" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
+            <Label Content="Auto Download" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
+            <Label Content="Energy Saver" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" Margin="0,-5" HorizontalAlignment="Right"/>
+            
+            <Label Content="Averages : " FontWeight="Bold" Margin="0,20,0,0"/>
+            <TextBlock Name="txtAverages" Height="auto"/>
+            <Label Content="Hibernate time : " FontWeight="Bold"/>
+            <TextBlock Name="txtHibernateTime" Height="auto"/>
+            <Label Content="Hibernate in : " FontWeight="Bold"/>
+            <TextBlock Name="txtHibernateRemaining" Height="auto"/>
+            
+            <Button Grid.Column="0" Margin="0,20,0,0" Height="40" Content="RESET" Click="Reset_Button_Click"/>
+            
+             <!--<Grid>
+               <Grid.ColumnDefinitions>
+                    <ColumnDefinition ></ColumnDefinition>
+                    <ColumnDefinition ></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Height="30" Content="RESET" Click="Reset_Button_Click"/>
+                --><!--<Button Grid.Column="1" Height="40" Content="EXIT" Click="Exit_Button_Click"/>--><!--
+                
+            </Grid>-->
+        </StackPanel>
+    </Grid>
+</Window>
