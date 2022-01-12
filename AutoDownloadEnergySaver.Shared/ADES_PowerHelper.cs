@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AutoDownloadEnergySaver.Shared
 {
-    internal class ADES_PowerHelper
+    public class ADES_PowerHelper
     {
         public void HibernatePc(int seconds)
         {
