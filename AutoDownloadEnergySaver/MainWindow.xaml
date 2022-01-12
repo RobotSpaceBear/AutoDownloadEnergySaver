@@ -16,11 +16,11 @@
             <Label Content="Auto Download" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
             <Label Content="Energy Saver" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" Margin="0,-5" HorizontalAlignment="Right"/>
             
-            <Label Content="Averages : " FontWeight="Bold" Margin="0,20,0,0"/>
+            <Label Content="Average : " FontWeight="Bold" Margin="0,20,0,0"/>
             <TextBlock Name="txtAverages" Height="auto"/>
-            <Label Content="Hibernate time : " FontWeight="Bold"/>
+            <Label Name="lblActionTime" FontWeight="Bold"/>
             <TextBlock Name="txtHibernateTime" Height="auto"/>
-            <Label Content="Hibernate in : " FontWeight="Bold"/>
+            <Label Name="lblActionIn" FontWeight="Bold"/>
             <TextBlock Name="txtHibernateRemaining" Height="auto"/>
             
             <Button Grid.Column="0" Margin="0,20,0,0" Height="40" Content="RESET" Click="Reset_Button_Click"/>

@@ -30,6 +30,7 @@ namespace AutoDownloadEnergySaver
         private int TIME_SECONDS_USED_FOR_AVERAGE; // amount of seconds over which the moving average download speed is calculated
         private long MIN_KILOBYTES_THRESHOLD; // traffic under which computer shutdown is considered
         private int TIME_SECONDS_BEFORE_SHUTDOWN; // time spent under traffic threshold before shutdown is triggered
+        private int SHUTDOWN_MODE; // shutdown mode : 0=suspend, 1=hibernate, 2=power off
         private bool SIMULATION_MODE; // "true" allows for the app to really hibernate the PC
 
         private readonly DispatcherTimer dispatcherTimer = new DispatcherTimer();
@@ -46,6 +47,7 @@ namespace AutoDownloadEnergySaver
             TIME_SECONDS_USED_FOR_AVERAGE = Convert.ToInt32(ConfigurationManager.AppSettings.Get("TIME_SECONDS_USED_FOR_AVERAGE"));
             MIN_KILOBYTES_THRESHOLD = Convert.ToInt64(ConfigurationManager.AppSettings.Get("MIN_KILOBYTES_THRESHOLD"));
             TIME_SECONDS_BEFORE_SHUTDOWN = Convert.ToInt32(ConfigurationManager.AppSettings.Get("TIME_SECONDS_BEFORE_SHUTDOWN"));
+            SHUTDOWN_MODE = Convert.ToInt32(ConfigurationManager.AppSettings.Get("SHUTDOWN_MODE"));
             SIMULATION_MODE = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("SIMULATION_MODE"));
 
 #if DEBUG
@@ -54,9 +56,26 @@ namespace AutoDownloadEnergySaver
 #endif
 
             _timeForShutdown = DateTime.Now.AddSeconds(TIME_SECONDS_BEFORE_SHUTDOWN);
-
             _netInterfacesReadingsDict = new Dictionary<string, List<DownloadSample>>();
-            //listBoxLogEvents.DataContext = LogWindowEvents;
+
+            switch (SHUTDOWN_MODE)
+            {
+                case 0: // suspend
+                    lblActionTime.Content = "Suspend time :";
+                    lblActionIn.Content = "Suspend in :";
+                    break;
+                case 1: // hibernate
+                    lblActionTime.Content = "Hibernate time :";
+                    lblActionIn.Content = "Hibernate in :";
+                    break;
+                case 2: // power off
+                    lblActionTime.Content = "Power off time :";
+                    lblActionIn.Content = "Power off in :";
+                    break;
+                default:
+                    break;
+            }
+
 
             dispatcherTimer.Tick += DoWorkLoop;
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(NETWORK_POOL_RATE_MILLISECONDS);
@@ -101,8 +120,25 @@ namespace AutoDownloadEnergySaver
                 else if (_canShutdown)
                 {
                     _canShutdown = false;
-                    Debug.WriteLine("=> ordered pc shutdown");
-                    HibernatePc();
+
+                    switch (SHUTDOWN_MODE)
+                    {
+                        case 0: // suspend
+                            Debug.WriteLine("=> ordered pc suspend");
+                            SuspendPc();
+                            break;
+                        case 1: // hibernate
+                            Debug.WriteLine("=> ordered pc hibernate");
+                            HibernatePc();
+                            break;
+                        case 2: // power off
+                            Debug.WriteLine("=> ordered pc shut down");
+                            PowerOffPc();
+                            break;
+                        default:
+                            break;
+                    }
+                    
                 }
             }
 
@@ -211,6 +247,19 @@ namespace AutoDownloadEnergySaver
         private void HibernatePc()
         {
             System.Windows.Forms.Application.SetSuspendState(PowerState.Hibernate, false, true);
+        }
+
+        private void SuspendPc()
+        {
+            System.Windows.Forms.Application.SetSuspendState(PowerState.Suspend, false, true);
+        }
+
+        private void PowerOffPc()
+        {
+            var psi = new ProcessStartInfo("shutdown", "/s /f");
+            psi.CreateNoWindow = true;
+            psi.UseShellExecute = false;
+            Process.Start(psi);
         }
 
         private void Reset_Button_Click(object sender, RoutedEventArgs e)
