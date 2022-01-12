@@ -120,6 +120,7 @@ namespace AutoDownloadEnergySaver
                 else if (_canShutdown)
                 {
                     _canShutdown = false;
+                    dispatcherTimer.Stop();
 
                     switch (SHUTDOWN_MODE)
                     {
@@ -267,6 +268,9 @@ namespace AutoDownloadEnergySaver
             _canShutdown = true;
             _timeForShutdown = DateTime.Now.AddSeconds(TIME_SECONDS_BEFORE_SHUTDOWN);
             _netInterfacesReadingsDict = new Dictionary<string, List<DownloadSample>>();
+            
+            dispatcherTimer.Stop(); 
+            dispatcherTimer.Start(); 
         }
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
