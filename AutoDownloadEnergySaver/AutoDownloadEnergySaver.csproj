@@ -5,6 +5,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>res\icon2.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +15,7 @@
 
   <ItemGroup>
     <Resource Include="res\icon1.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="res\icon2.ico" />
   </ItemGroup>

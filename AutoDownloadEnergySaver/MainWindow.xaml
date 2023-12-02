@@ -13,9 +13,19 @@
         Topmost="true">
     <Grid Margin="10,0">
         <StackPanel Orientation="Vertical">
-            <Label Content="ADES" FontWeight="Bold" FontSize="14" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
-            <Label Content="Auto Download" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
-            <Label Content="Energy Saver" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" Margin="0,-5" HorizontalAlignment="Right"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <Image Grid.Column="0" Source="pack://application:,,,/res/icon2.ico" Width="40" HorizontalAlignment="Left"></Image>
+                <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right" >
+                    <Label Content="ADES" FontWeight="Bold" FontSize="14" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
+                    <Label Content="Auto Download" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" HorizontalAlignment="Right"/>
+                    <Label Content="Energy Saver" FontWeight="Bold" FontSize="10" Foreground="Gray" Padding="0" Margin="0,-5" HorizontalAlignment="Right"/>
+                </StackPanel>
+            </Grid>
             
             <Label Content="Average : " FontWeight="Bold" Margin="0,20,0,0"/>
             <TextBlock Name="txtAverages" Height="auto"/>
