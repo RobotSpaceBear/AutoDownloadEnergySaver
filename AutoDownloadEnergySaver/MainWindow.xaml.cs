@@ -39,6 +39,9 @@ namespace AutoDownloadEnergySaver
         private DateTime _timeForShutdown;
         private bool _canShutdown = true;
 
+        static readonly string[] SizeSuffixes =
+                  { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -100,11 +103,11 @@ namespace AutoDownloadEnergySaver
             //updating the UI
             foreach (var average in _averages)
             {
-                txtAverages.Text = $"Interface '{average.Key}' : average '{ConvertBytesToKiloBytes(average.Value)}' kB/s";
+                txtAverages.Text = $"Interface '{average.Key}' : average '{SizeSuffix(average.Value)}'/s";
             }
 
             //if highest average is over the threshold, we bump the scheduled shutdown time by the set amount of time
-            if (_averages.Count > 0 &&
+                if (_averages.Count > 0 &&
                 ConvertBytesToKiloBytes(_averages.Max(x => x.Value)) > MIN_KILOBYTES_THRESHOLD)
             {
                 _timeForShutdown = DateTime.Now.AddSeconds(TIME_SECONDS_BEFORE_SHUTDOWN);
@@ -145,11 +148,11 @@ namespace AutoDownloadEnergySaver
 
 
 
-            txtHibernateTime.Text = _timeForShutdown.ToString("HH:MM:ss");
+            txtHibernateTime.Text = _timeForShutdown.ToString("HH:mm:ss");
             txtHibernateRemaining.Text = $"{(int)((_timeForShutdown - DateTime.Now).TotalSeconds)} sec";
             if (_averages.Any())
             {
-                txtAverages.Text = ConvertBytesToKiloBytes(_averages.Max(x => x.Value)) + "kB/s";
+                txtAverages.Text = SizeSuffix(_averages.Max(x => x.Value)) + "/s";
             }
         }
 
@@ -161,11 +164,14 @@ namespace AutoDownloadEnergySaver
             {
                 if (_netInterfacesReadingsDict[netInterfaceName].Count < 2) break;
 
-                var totalBytes = _netInterfacesReadingsDict[netInterfaceName][_netInterfacesReadingsDict[netInterfaceName].Count - 1].BytesValue - _netInterfacesReadingsDict[netInterfaceName][0].BytesValue;
+                var totalBytes = 
+                    _netInterfacesReadingsDict[netInterfaceName][_netInterfacesReadingsDict[netInterfaceName].Count - 1].BytesValue - 
+                    _netInterfacesReadingsDict[netInterfaceName][0].BytesValue;
 
                 var average = totalBytes / _netInterfacesReadingsDict.Count;
 
-                Debug.WriteLine(" ==> {0} \taverage {1} bytes", netInterfaceName, average);
+                Debug.WriteLine(" ==> {0} \taverage {1} bytes | {2}/s", netInterfaceName, average, SizeSuffix(average));
+
 
                 result.Add(netInterfaceName, average);
             }
@@ -182,14 +188,15 @@ namespace AutoDownloadEnergySaver
 
             foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces().Where(x => !x.Name.Contains("Loopback")))
             {
-                long bytesReceived = netInterface.GetIPStatistics().BytesReceived;
+                //long bytesReceived = netInterface.GetIPStatistics().BytesReceived;
+                long bytesReceivedOrSent = netInterface.GetIPStatistics().BytesReceived + netInterface.GetIPStatistics().BytesSent;
 
                 if (!_netInterfacesReadingsDict.ContainsKey(netInterface.Name))
                 {
                     _netInterfacesReadingsDict.Add(netInterface.Name, new List<DownloadSample>());
                 }
 
-                _netInterfacesReadingsDict[netInterface.Name].Add(new DownloadSample() { Timestamp = DateTime.Now, BytesValue = bytesReceived });
+                _netInterfacesReadingsDict[netInterface.Name].Add(new DownloadSample() { Timestamp = DateTime.Now, BytesValue = bytesReceivedOrSent });
 
             }
         }
@@ -201,7 +208,7 @@ namespace AutoDownloadEnergySaver
             {
                 foreach (var reading in _netInterfacesReadingsDict[netInterfaceName])
                 {
-                    Debug.WriteLine(" ==> {0} \t{1} \t{2}", netInterfaceName, reading.Timestamp, reading.BytesValue);
+                    Debug.WriteLine(" ==> {0} \t{1} \t{2} | {3}", netInterfaceName, reading.Timestamp, reading.BytesValue, SizeSuffix(reading.BytesValue));
                 }
             }
         }
@@ -240,9 +247,21 @@ namespace AutoDownloadEnergySaver
             return bytes / (1024);
         }
 
-        private long ConvertBytesToMegaBytes(long bytes)
+
+        //from https://stackoverflow.com/a/14488941
+        static string SizeSuffix(Int64 value, int decimalPlaces = 1)
         {
-            return bytes / (1024 * 1024);
+            if (value < 0) { return "-" + SizeSuffix(-value, decimalPlaces); }
+
+            int i = 0;
+            decimal dValue = (decimal)value;
+            while (Math.Round(dValue, decimalPlaces) >= 1024)
+            {
+                dValue /= 1024;
+                i++;
+            }
+
+            return string.Format("{0:n" + decimalPlaces + "} {1}", dValue, SizeSuffixes[i]);
         }
 
         private void HibernatePc()
