@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:AutoDownloadEnergySaver"
         mc:Ignorable="d"
         Title="ADES"
+        Icon="pack://application:,,,/res/icon2.ico"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Height="295" Width="200" ResizeMode="NoResize"
         WindowStyle="SingleBorderWindow"
