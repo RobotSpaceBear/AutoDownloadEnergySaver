@@ -20,6 +20,8 @@ ADES looks up your network card interfaces and counts the amount of traffic it s
     <add key="MIN_KILOBYTES_THRESHOLD" value="800" />
     <!--time spent under traffic threshold before shutdown is triggered -->
     <add key="TIME_SECONDS_BEFORE_SHUTDOWN" value="30" />
+    <!--Shutdown mode : 0=suspend, 1=hibernate, 2=power off  -->
+    <add key="SHUTDOWN_MODE" value="0" />
     <!--"true" allows for the app to really hibernate the PC -->
     <add key="SIMULATION_MODE" value="false" />
   </appSettings>
